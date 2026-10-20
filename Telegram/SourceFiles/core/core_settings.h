@@ -530,10 +530,14 @@ public:
 	}
 	void setHideStories(bool value) {
 		writePref<bool>(kHideStoriesKey, value);
+		_hideStoriesChanges.fire_copy(value);
 		_saveDelayed.fire({});
 	}
 	[[nodiscard]] bool hideStories() {
 		return readPref<bool>(kHideStoriesKey, false);
+	}
+	[[nodiscard]] rpl::producer<bool> hideStoriesChanges() const {
+		return _hideStoriesChanges.events();
 	}
 	void setPullToNextChannel(bool value) {
 		_pullToNextChannel = value;
