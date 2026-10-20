@@ -8,6 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "platform/win/notifications_manager_win.h"
 
 #include "window/notifications_utilities.h"
+#include "window/main_window.h"
 #include "window/window_session_controller.h"
 #include "base/platform/win/base_windows_co_task_mem.h"
 #include "base/platform/win/base_windows_rpcndr_h.h"
@@ -57,6 +58,8 @@ constexpr auto kQuerySettingsEachMs = 1000;
 
 crl::time LastSettingsQueryMs/* = 0*/;
 
+auto NativeFailed = false;
+
 [[nodiscard]] bool ShouldQuerySettings() {
 	const auto now = crl::now();
 	if (LastSettingsQueryMs > 0 && now <= LastSettingsQueryMs + kQuerySettingsEachMs) {
@@ -103,6 +106,28 @@ crl::time LastSettingsQueryMs/* = 0*/;
 	<audio silent="true"/>
 </toast>
 )";
+}
+
+[[nodiscard]] QString NotificationsSourceIconPath() {
+	const auto folder = cWorkingDir() + u"tdata"_q;
+	QDir().mkpath(folder);
+	const auto path = folder + u"/notifications_icon.png"_q;
+	return Window::Logo().save(path, "PNG") ? path : QString();
+}
+
+// The toast was dropped or rejected by the system, so the remaining
+// notifications of this launch are shown by our own popups instead.
+void FallbackToCustom(const QString &reason) {
+	if (NativeFailed) {
+		return;
+	}
+	NativeFailed = true;
+	LOG(("App Error: %1, switching to custom notifications.").arg(reason));
+	crl::on_main([] {
+		if (Core::IsAppLaunched()) {
+			Core::App().notifications().createManager();
+		}
+	});
 }
 
 bool init() {
