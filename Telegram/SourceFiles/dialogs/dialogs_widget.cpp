@@ -2845,14 +2845,6 @@ void Widget::updateStoriesVisibility() {
 	if (!_stories) {
 		return;
 	}
-	if (Core::App().settings().hideStories()) {
-		_stories->setToggledHidden(true, false);
-		if (_scroll->position().overscroll < -st::dialogsFilterSkip) {
-			_scroll->clearOverscroll();
-		}
-		_stories->update();
-		return;
-	}
 	const auto widthAnimation = !_widthAnimationCache.isNull();
 	const auto suggestionsAnimation = widthAnimation
 		&& !_openedFolder
@@ -2873,6 +2865,7 @@ void Widget::updateStoriesVisibility() {
 		|| (widthAnimation && !suggestionsAnimation)
 		|| _childList
 		|| _stories->empty()
+		|| Core::App().settings().hideStories()
 		|| (pulledDown && hiddenAnimated);
 	const auto hidden = hiddenInstant || hiddenAnimated;
 	const auto changed = (_stories->toggledHidden() != hidden);
