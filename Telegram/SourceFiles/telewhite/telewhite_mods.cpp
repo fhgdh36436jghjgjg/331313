@@ -9,6 +9,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "base/unixtime.h"
 #include "core/application.h"
 #include "core/core_settings.h"
+#include "data/data_media_types.h"
+#include "history/history_item.h"
 #include "lang/lang_keys.h"
 
 namespace Telewhite {
