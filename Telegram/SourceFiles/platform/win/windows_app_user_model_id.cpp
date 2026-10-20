@@ -11,6 +11,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "platform/win/windows_toast_activator.h"
 #include "base/platform/win/base_windows_winrt.h"
 #include "core/launcher.h"
+#include "core/version.h"
 
 #include <propvarutil.h>
 #include <propkey.h>
@@ -39,6 +40,24 @@ const WCHAR AppUserModelIdBase[] = L"Telewhite.Desktop";
 			+ u"/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/"_q;
 	}
 	return QString();
+}
+
+[[nodiscard]] std::wstring NotificationsSourceKey() {
+	return L"Software\\Classes\\AppUserModelId\\" + Id();
+}
+
+bool SetRegistryString(
+		HKEY key,
+		LPCWSTR name,
+		const std::wstring &value) {
+	const auto status = RegSetValueEx(
+		key,
+		name,
+		0,
+		REG_SZ,
+		reinterpret_cast<const BYTE*>(value.c_str()),
+		DWORD((value.size() + 1) * sizeof(WCHAR)));
+	return (status == ERROR_SUCCESS);
 }
 
 } // namespace
