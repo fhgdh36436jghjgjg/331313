@@ -8,6 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "platform/win/notifications_manager_win.h"
 
 #include "window/notifications_utilities.h"
+#include "window/main_window.h"
 #include "window/window_session_controller.h"
 #include "base/platform/win/base_windows_co_task_mem.h"
 #include "base/platform/win/base_windows_rpcndr_h.h"
@@ -56,6 +57,8 @@ namespace {
 constexpr auto kQuerySettingsEachMs = 1000;
 
 crl::time LastSettingsQueryMs/* = 0*/;
+
+auto NativeFailed = false;
 
 [[nodiscard]] bool ShouldQuerySettings() {
 	const auto now = crl::now();
