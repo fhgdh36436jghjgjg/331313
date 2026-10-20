@@ -7,6 +7,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 */
 #include "apiwrap.h"
 
+#include "telewhite/telewhite_mods.h"
 #include "api/api_authorizations.h"
 #include "api/api_attached_stickers.h"
 #include "api/api_blocked_peers.h"
@@ -1442,7 +1443,8 @@ void ApiWrap::markContentsRead(
 		QVector<MTPint>>();
 	markedIds.reserve(items.size());
 	for (const auto &item : items) {
-		if (!item->markContentsRead(true) || !item->isRegular()) {
+		const auto skip = Telewhite::SkipContentsRead(item);
+		if (!item->markContentsRead(true) || !item->isRegular() || skip) {
 			continue;
 		}
 		if (const auto channel = item->history()->peer->asChannel()) {
