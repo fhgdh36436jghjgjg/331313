@@ -11,6 +11,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "platform/win/windows_toast_activator.h"
 #include "base/platform/win/base_windows_winrt.h"
 #include "core/launcher.h"
+#include "core/version.h"
 
 #include <propvarutil.h>
 #include <propkey.h>
